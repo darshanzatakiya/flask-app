@@ -4,14 +4,16 @@ import pymysql
 app = Flask(__name__)
 
 def get_db_connection():
-    return pymysql.connect(
+    connection = pymysql.connect(
         host='mydb.c5ayy6koa5gm.eu-central-1.rds.amazonaws.com',
         user='dbuser',
         password='dbpassword',
-        database='devprojdb',
+        database='devprojdb',      # <-- use 'database' instead of 'db'
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
     )
+    return connection
+
 
 
 @app.route('/health')

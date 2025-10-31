@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -52,5 +52,157 @@
     // Load initial data when the page is loaded
     loadData();
 </script>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask REST API UI</title>
+    <style>
+        /* Background */
+        body {
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            margin: 0;
+        }
+
+        /* Glass container */
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            padding: 2rem 3rem;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            margin-top: 25px;
+            font-size: 1.3rem;
+            color: #e0e0e0;
+        }
+
+        label {
+            font-weight: 500;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: #667eea;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: #764ba2;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        li {
+            background: rgba(255, 255, 255, 0.15);
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        /* Scrollbar styling */
+        ul::-webkit-scrollbar {
+            width: 6px;
+        }
+        ul::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flask REST API UI</h1>
+
+        <h2>Insert Record</h2>
+        <form id="insertForm">
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required>
+            <br>
+            <button type="button" onclick="insertRecord()">Insert Record</button>
+        </form>
+
+        <h2>View Data</h2>
+        <ul id="dataList"></ul>
+    </div>
+
+    <script>
+        function insertRecord() {
+            const name = document.getElementById('name').value;
+            fetch('/insert_record', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 'name': name }),
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                loadData();
+                document.getElementById('name').value = '';
+            });
+        }
+
+        function loadData() {
+            fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                const dataList = document.getElementById('dataList');
+                dataList.innerHTML = '';
+                data.forEach(record => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `ID: ${record.id} — Name: ${record.name}`;
+                    dataList.appendChild(listItem);
+                });
+            });
+        }
+
+        // Load initial data
+        loadData();
+    </script>
 </body>
 </html>

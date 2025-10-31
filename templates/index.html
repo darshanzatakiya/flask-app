@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -52,5 +52,131 @@
     // Load initial data when the page is loaded
     loadData();
 </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask REST API UI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        }
+
+        .gradient-border {
+            border-radius: 25px;
+            padding: 2px;
+            background: linear-gradient(135deg, #6b73ff, #000dff);
+        }
+
+        input, button {
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(255,255,255,0.5);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-start min-h-screen py-10">
+
+    <div class="glass p-8 w-full max-w-lg text-white shadow-lg gradient-border">
+        <h1 class="text-3xl font-bold mb-6 text-center">Flask REST API UI</h1>
+
+        <h2 class="text-xl font-semibold mb-4">Insert Record</h2>
+        <form id="insertForm" class="flex flex-col gap-3">
+            <input type="text" id="name" name="name" placeholder="Enter name" class="p-2 rounded text-black bg-white/80" required>
+            <button type="button" id="insertBtn" onclick="insertRecord()" class="bg-white text-black font-semibold py-2 rounded hover:bg-gray-200 transition">Insert Record</button>
+        </form>
+
+        <h2 class="text-xl font-semibold mt-8 mb-4">View Data</h2>
+        <ul id="dataList" class="list-disc list-inside"></ul>
+    </div>
+
+    <script>
+        const insertBtn = document.getElementById('insertBtn');
+
+        async function insertRecord() {
+            const name = document.getElementById('name').value.trim();
+            if (!name) {
+                alert('Please enter a name.');
+                return;
+            }
+
+            insertBtn.disabled = true;
+
+            try {
+                const response = await fetch('/insert_record', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    document.getElementById('name').value = '';
+                    loadData();
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                alert(`Error: ${error}`);
+            } finally {
+                insertBtn.disabled = false;
+            }
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('/data');
+                const data = await response.json();
+                const dataList = document.getElementById('dataList');
+                dataList.innerHTML = '';
+                data.forEach(record => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `ID: ${record.id}, Name: ${record.name}`;
+                    dataList.appendChild(listItem);
+                });
+            } catch (error) {
+                alert(`Error loading data: ${error}`);
+            }
+        }
+
+        window.onload = loadData;
+    </script>
 </body>
 </html>
